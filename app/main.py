@@ -10,14 +10,15 @@ app = FastAPI(
 )
 
 origins = [
-    "http://localhost:3000",  # Local Next.js
-    # "https://your-app.vercel.app",  # Deploy ke baad apna Vercel URL yahan add karna
+    "http://localhost:3000",
+    "https://ai-research-frontend-one.vercel.app",
+    "https://ai-research-frontend-yha703bw0-code-warriors.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -28,6 +29,5 @@ app.include_router(router)
 @app.get("/health")
 def health():
     return {
-        "status": "ok",
-        "message": "Backend Running 🚀",
+        "status": "healthy",
     }
