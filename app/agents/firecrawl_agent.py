@@ -1,5 +1,5 @@
 import os
-from firecrawl import FirecrawlApp
+from firecrawl import Firecrawl
 
 
 class FirecrawlAgent:
@@ -7,44 +7,38 @@ class FirecrawlAgent:
         api_key = os.getenv("FIRECRAWL_API_KEY")
 
         if not api_key:
-            raise ValueError("FIRECRAWL_API_KEY environment variable is not set")
+            raise ValueError(
+                "FIRECRAWL_API_KEY environment variable is not set"
+            )
 
-        self.client = FirecrawlApp(api_key=api_key)
+        self.client = Firecrawl(api_key=api_key)
 
     def scrape_url(self, url: str) -> str:
-        """
-        Scrape a webpage and return its main text content.
-        """
-
         if not url:
             return ""
 
         try:
-            result = self.client.scrape_url(
+            result = self.client.scrape(
                 url,
-                params={
-                    "formats": ["markdown"]
-                }
+                formats=["markdown"]
             )
 
-            if not result:
+            if result is None:
                 return ""
 
-            # Firecrawl response can contain markdown
+            # Current Firecrawl SDK returns a document object
+            markdown = getattr(result, "markdown", None)
+
+            if markdown:
+                return markdown
+
+            # Fallback if response is dictionary-like
             if isinstance(result, dict):
-                markdown = result.get("markdown")
-
-                if markdown:
-                    return markdown
-
-                # Fallback for older response formats
-                data = result.get("data")
-
-                if isinstance(data, dict):
-                    return data.get("markdown", "") or data.get("content", "")
-
-                if isinstance(data, str):
-                    return data
+                return (
+                    result.get("markdown")
+                    or result.get("content")
+                    or ""
+                )
 
             return str(result)
 
@@ -53,5 +47,4 @@ class FirecrawlAgent:
             return ""
 
 
-# Global agent instance
 firecrawl_agent = FirecrawlAgent()
