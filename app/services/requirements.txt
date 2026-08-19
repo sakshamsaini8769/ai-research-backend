@@ -2,5 +2,5 @@ fastapi
 uvicorn
 groq
 tavily-python
-firecrawl-py
 python-dotenv
+firecrawl-py==4.33.1
