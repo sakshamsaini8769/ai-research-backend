@@ -1,1 +1,6 @@
-
+fastapi
+uvicorn
+groq
+tavily-python
+firecrawl-py
+python-dotenv
